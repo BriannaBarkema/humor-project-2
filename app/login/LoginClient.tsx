@@ -4,9 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
 function safeNext(raw: string | null) {
-    if (!raw) return "/dorms";
-    if (!raw.startsWith("/")) return "/dorms";
-    if (raw.startsWith("/auth")) return "/dorms";
+    if (!raw) return "/dashboard";
+    if (!raw.startsWith("/")) return "/dashboard";
+    if (raw.startsWith("/auth")) return "/dashboard";
     return raw;
 }
 
@@ -40,7 +40,7 @@ export default function LoginClient() {
             ? "captions"
             : next === "/caption_generate"
                 ? "caption generator"
-                : "dorms";
+                : "dashboard";
 
     return (
         <main style={styles.page}>
