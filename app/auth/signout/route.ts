@@ -1,21 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 
-export async function POST() {
-  const cookieStore = await cookies();
+export async function POST(request: NextRequest) {
+  // Use the actual origin from the request (works on Vercel + locally)
+  const origin = new URL(request.url).origin;
+
+  const response = NextResponse.redirect(`${origin}/login`, {
+    status: 303, // good practice for POST -> redirect
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
+            response.cookies.set(name, value, options);
           });
         },
       },
@@ -23,5 +25,6 @@ export async function POST() {
   );
 
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL("/login", process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"));
+
+  return response;
 }
