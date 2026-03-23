@@ -69,12 +69,18 @@ export async function createCaptionExample(formData: FormData) {
     const priority = parseSmallint(String(formData.get("priority") ?? "0"), "priority", { defaultValue: 0 });
     const image_id = parseUuidOrNull(String(formData.get("image_id") ?? ""));
 
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
     const { error } = await admin.from("caption_examples").insert({
         image_description,
         caption,
         explanation,
         priority,
         image_id,
+        created_by_user_id: user.id
     });
 
     if (error) throw new Error(error.message);

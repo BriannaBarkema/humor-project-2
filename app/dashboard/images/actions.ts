@@ -31,7 +31,12 @@ export async function createImage(formData: FormData) {
 
   if (!url) throw new Error("url is required");
 
-  const payload: any = { url, is_public, is_common_use };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const payload: any = { url, is_public, is_common_use, created_by_user_id: user.id };
   if (additional_context) payload.additional_context = additional_context;
 
   const { error } = await admin.from("images").insert(payload);

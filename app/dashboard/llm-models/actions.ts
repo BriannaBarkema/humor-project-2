@@ -48,11 +48,17 @@ export async function createLlmModel(formData: FormData) {
     const provider_model_id = requiredText(formData.get("provider_model_id"), "provider_model_id");
     const is_temperature_supported = formData.get("is_temperature_supported") === "on";
 
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
     const { error } = await admin.from("llm_models").insert({
         name,
         llm_provider_id,
         provider_model_id,
         is_temperature_supported,
+        created_by_user_id: user.id
     });
 
     if (error) throw new Error(error.message);

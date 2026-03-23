@@ -46,8 +46,14 @@ export async function createWhitelistEmail(formData: FormData) {
 
     const email_address = normalizeEmail(String(formData.get("email_address") ?? ""));
 
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
     const { error } = await admin.from("whitelist_email_addresses").insert({
         email_address,
+        created_by_user_id: user.id
     });
 
     if (error) throw new Error(error.message);

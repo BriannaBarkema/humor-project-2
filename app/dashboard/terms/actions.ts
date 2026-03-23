@@ -65,12 +65,18 @@ export async function createTerm(formData: FormData) {
     const priority = parseSmallint(String(formData.get("priority") ?? "0"), "priority", { defaultValue: 0 });
     const term_type_id = optionalSmallint(formData.get("term_type_id"));
 
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
     const { error } = await admin.from("terms").insert({
         term,
         definition,
         example,
         priority,
         term_type_id,
+        created_by_user_id: user.id
     });
 
     if (error) throw new Error(error.message);

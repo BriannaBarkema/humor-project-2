@@ -42,7 +42,12 @@ export async function createLlmProvider(formData: FormData) {
 
     const name = requiredText(formData.get("name"), "name");
 
-    const { error } = await admin.from("llm_providers").insert({ name });
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const { error } = await admin.from("llm_providers").insert({ name, created_by_user_id: user.id });
     if (error) throw new Error(error.message);
 
     redirect("/dashboard/llm-providers");
