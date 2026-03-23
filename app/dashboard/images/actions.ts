@@ -36,6 +36,8 @@ export async function createImage(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) redirect("/login?next=/dashboard/allowed-signup-domains");
+
   const payload: any = { url, is_public, is_common_use, created_by_user_id: user.id };
   if (additional_context) payload.additional_context = additional_context;
 

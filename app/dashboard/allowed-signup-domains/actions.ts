@@ -67,6 +67,8 @@ export async function createAllowedSignupDomain(formData: FormData) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) redirect("/login?next=/dashboard/allowed-signup-domains");
+
     const { error } = await admin.from("allowed_signup_domains").insert({ apex_domain, created_by_user_id: user.id });
     if (error) throw new Error(error.message);
 

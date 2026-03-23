@@ -51,6 +51,8 @@ export async function createWhitelistEmail(formData: FormData) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) redirect("/login?next=/dashboard/allowed-signup-domains");
+
     const { error } = await admin.from("whitelist_email_addresses").insert({
         email_address,
         created_by_user_id: user.id

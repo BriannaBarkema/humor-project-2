@@ -70,6 +70,8 @@ export async function createTerm(formData: FormData) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) redirect("/login?next=/dashboard/allowed-signup-domains");
+
     const { error } = await admin.from("terms").insert({
         term,
         definition,

@@ -74,6 +74,8 @@ export async function createCaptionExample(formData: FormData) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) redirect("/login?next=/dashboard/allowed-signup-domains");
+
     const { error } = await admin.from("caption_examples").insert({
         image_description,
         caption,

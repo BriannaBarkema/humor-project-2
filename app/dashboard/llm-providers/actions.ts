@@ -47,6 +47,8 @@ export async function createLlmProvider(formData: FormData) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) redirect("/login?next=/dashboard/allowed-signup-domains");
+
     const { error } = await admin.from("llm_providers").insert({ name, created_by_user_id: user.id });
     if (error) throw new Error(error.message);
 
