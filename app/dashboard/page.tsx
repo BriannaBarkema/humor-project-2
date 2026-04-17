@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties, ReactNode } from "react";
 import { createAdminClient } from "@/utils/supabase/admin";
 
 type CaptionRow = {
@@ -218,7 +219,7 @@ export default async function DashboardHome() {
 
                 return (
                   <li key={vote.id} style={styles.voteRow}>
-                    <div style={styles.votePill(isUpvote)}>{isUpvote ? "+1" : "-1"}</div>
+                    <div style={votePill(isUpvote)}>{isUpvote ? "+1" : "-1"}</div>
                     <div style={styles.voteBody}>
                       <div style={styles.flexTruncate} title={caption?.content ?? ""}>
                         {caption?.content ?? "Caption unavailable"}
@@ -249,7 +250,7 @@ function StatCard({ title, value, helper }: { title: string; value: string; help
   );
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function Panel({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={styles.card}>
       <div style={{ fontWeight: 900, marginBottom: 10 }}>{title}</div>
@@ -281,7 +282,21 @@ function formatPercent(value: number) {
   }).format(value)}%`;
 }
 
-const styles: Record<string, React.CSSProperties | ((...args: any[]) => React.CSSProperties)> = {
+function votePill(isUpvote: boolean): CSSProperties {
+  return {
+    flex: "0 0 auto",
+    minWidth: 40,
+    textAlign: "center",
+    padding: "7px 0",
+    borderRadius: 999,
+    fontWeight: 900,
+    fontSize: 12.5,
+    border: isUpvote ? "1px solid rgba(120,255,170,0.22)" : "1px solid rgba(255,120,120,0.24)",
+    background: isUpvote ? "rgba(120,255,170,0.10)" : "rgba(255,120,120,0.10)",
+  };
+}
+
+const styles: Record<string, CSSProperties> = {
   grid3: { display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 },
   grid4: { display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 12 },
   grid2: { display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 },
@@ -346,18 +361,6 @@ const styles: Record<string, React.CSSProperties | ((...args: any[]) => React.CS
     opacity: 0.72,
     fontSize: 12.5,
   },
-
-  votePill: (isUpvote: boolean) => ({
-    flex: "0 0 auto",
-    minWidth: 40,
-    textAlign: "center",
-    padding: "7px 0",
-    borderRadius: 999,
-    fontWeight: 900,
-    fontSize: 12.5,
-    border: isUpvote ? "1px solid rgba(120,255,170,0.22)" : "1px solid rgba(255,120,120,0.24)",
-    background: isUpvote ? "rgba(120,255,170,0.10)" : "rgba(255,120,120,0.10)",
-  }),
 
   idPill: {
     flex: "0 0 auto",
